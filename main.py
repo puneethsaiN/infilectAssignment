@@ -7,6 +7,20 @@ from databases import Database
 from sqlalchemy.orm import sessionmaker
 import time
 
+def isValid(matrix, maxSizeRect, row, col):
+    wid = maxSizeRect[row][col][0]
+    hgt = maxSizeRect[row][col][1]
+
+    top_left_x = row - hgt + 1
+    top_left_y = col - wid + 1
+
+    st = set()
+    for i in range(top_left_x, row + 1):
+        for j in range(top_left_y, col + 1):
+            st.add(matrix[i][j])
+    return len(st)==1
+
+
 def largest_rectangle(matrix: list[list[int]]) -> tuple:
     """
     :param matrix: A 2D matrix of integers (1 <= len(matrix),
@@ -29,13 +43,13 @@ def largest_rectangle(matrix: list[list[int]]) -> tuple:
                 maxSizeRect[i][j][1] = maxSizeRect[i-1][j][1] + 1
 
     maxArea = -float('inf')            
-
-    for row in range(len(maxSizeRect)):
-        for col in range(len(maxSizeRect[row])):
+    resNum = -1
+    for row in range(len(matrix)):
+        for col in range(len(matrix[row])):
             if maxSizeRect[row][col][0] == maxSizeRect[row][col][1]:
                 continue
             currArea = maxSizeRect[row][col][0] * maxSizeRect[row][col][1]
-            if currArea > maxArea:
+            if currArea > maxArea and isValid(matrix, maxSizeRect, row, col):
                 maxArea = currArea
                 resNum = matrix[row][col]           
                 
